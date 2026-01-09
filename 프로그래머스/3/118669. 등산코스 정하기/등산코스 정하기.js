@@ -1,139 +1,83 @@
-class Heap {
+class Queue {
     constructor() {
-        this.heap = [];
+        this.queue = [];
+        this.front = 0;
+        this.rear = 0;
     }
-    getLeftChildIndex = (parentIndex) => parentIndex * 2 + 1;
-    getRightChildIndex = (parentIndex) => parentIndex * 2 + 2;
-    getParentIndex = (childIndex) => Math.floor((childIndex - 1) / 2);
     
-    peek = () => this.heap[0]; 
-    insert = (key, value) => { 
-        const node = { key, value }; 
-        this.heap.push(node);
-        this.heapifyUp();
+    enqueue(val) {
+        this.queue[this.rear++] = val;
     }
-    heapifyUp = () => {
-        let index = this.heap.length - 1;
-        const lastInsertedNode = this.heap[index];
-
-        while (index > 0) {
-            const parentIndex = this.getParentIndex(index);
-
-            if (this.heap[parentIndex].value > lastInsertedNode.value) {
-                this.heap[index] = this.heap[parentIndex];
-                index = parentIndex;
-            } else {
-                break;
-            }
-        }
-        this.heap[index] = lastInsertedNode;
+    
+    dequeue() {
+        const val = this.queue[this.front];
+        delete this.queue[this.front++];
+        return val;
     }
-    remove = () => {
-        const count = this.heap.length;
-        const rootNode = this.heap[0];
-
-        if (count <= 0) {
-            return undefined;
-        }
-        if (count === 1) {
-            this.heap = [];
-        }
-        else {
-            this.heap[0] = this.heap.pop();
-            this.heapifyDown();
-        }
-        return rootNode
-    }
-    heapifyDown = () => {
-        let index = 0;
-        const count = this.heap.length;
-        const rootNode = this.heap[index];
-
-        while (this.getLeftChildIndex(index) < count) {
-            const leftChildIndex = this.getLeftChildIndex(index);
-            const rightChildIndex = this.getRightChildIndex(index);
-
-            const smallerChildIndex = rightChildIndex < count && this.heap[rightChildIndex].value < this.heap[leftChildIndex].value ? rightChildIndex : leftChildIndex;
-
-            if (this.heap[smallerChildIndex].value <= rootNode.value) {
-                this.heap[index] = this.heap[smallerChildIndex];
-                index = smallerChildIndex;
-            } else {
-                break;
-            }
-        }
-        this.heap[index] = rootNode;
+    
+    isEmpty() {
+        return this.front === this.rear;
     }
 }
-class PriorityQueue extends Heap {
-    constructor() {
-        super();
-    }
-
-    enqueue = (priority, value) => this.insert(priority, value);
-    dequeue = () => this.remove();
-    isEmpty = () => this.heap.length <= 0;
-}
-let ans = 0;
 function solution(n, paths, gates, summits) {
-    let answer = [];
-    let priority = [];
-    let link = [];
-    const pq = new PriorityQueue();
-    for(let i=0; i<=n; ++i){
-        let temp = [];
-        link.push(temp);
-        priority[i] = 987654321;
+    summits.sort((a, b) => a - b);
+    const heap = new Queue();
+    const pathMap = new Map();
+    const summitMap = new Map();
+    const gateMap = new Map();
+    const intensity = Array.from({length: n + 1}, () => 10000001);
+    intensity[0] = 0;
+    
+    for (const summit of summits) {
+        summitMap.set(summit, true);
     }
-    for(let i=0; i<paths.length; ++i){
-        link[paths[i][0]].push([paths[i][1], paths[i][2]]);
-        link[paths[i][1]].push([paths[i][0], paths[i][2]]);
+    
+    // gate 시작점 intensity 0으로 초기화 후 최소힙에 넣어줌.
+    for (const gate of gates) {
+        gateMap.set(gate, true);
+        heap.enqueue({ node: gate, intensity: 0 });
+        intensity[gate] = 0;
     }
-    for(let i=0; i<gates.length; ++i){
-        priority[gates[i]] = 0;
-        for(let j=0; j<link[gates[i]].length; ++j){
-            pq.enqueue([gates[i], link[gates[i]][j][0]], link[gates[i]][j][1]);
-            link[gates[i]][j][0] = 0;
+    
+    // path 순회 방지를 위한 해시맵 생성.
+    for (const [node1, node2, intensity] of paths) {
+        if (pathMap.has(node1)) {
+            const next = pathMap.get(node1);
+            next[next.length] = [node2, intensity];
+            pathMap.set(node1, next);
+        } else {
+            pathMap.set(node1, [[node2, intensity]]);
         }
-    }
-    while(!pq.isEmpty()){
-        let temp = pq.dequeue();
-        let prev = temp.key[0];
-        let cur = temp.key[1];
-        let value = temp.value;
-        let chk;
-        if(priority[cur] < Math.max(priority[prev], value)){
-            continue;
-        }
-        priority[cur] = Math.max(priority[prev], value);
         
-        chk = false;
-        for(let i=0; i<summits.length; ++i){
-            if(prev === summits[i]){
-                chk = true;
-                break;;
-            }
-        }
-        if(chk){
-            continue;
-        }
-        for(let i=0; i<link[cur].length; ++i){
-            if(link[cur][i][0] == 0){
-                continue;
-            }
-            pq.enqueue([cur, link[cur][i][0]], link[cur][i][1]);
-            link[cur][i][0] = 0;
+        if (pathMap.has(node2)) {
+            const next = pathMap.get(node2);
+            next[next.length] = [node1, intensity];
+            pathMap.set(node2, next);
+        } else {
+            pathMap.set(node2, [[node1, intensity]]);
         }
     }
-    answer[0] = 987654321;
-    answer[1] = 987654321;
-    for(let i=0; i<summits.length; ++i){
-        if(answer[1] > priority[summits[i]]){
-            answer[1] = priority[summits[i]];
-            answer[0] = summits[i];
-        } else if(answer[1] === priority[summits[i]]){
-            answer[0] = Math.min(answer[0], summits[i]);
+    
+    while (!heap.isEmpty()) {
+        const { node: current, intensity: currIntensity } = heap.dequeue();
+        if (summitMap.has(current)) continue;
+        
+        const nexts = pathMap.get(current);
+        for (const [next, nextIntensity] of nexts) {
+            const maxIntensity = Math.max(currIntensity, nextIntensity);
+            
+            if (maxIntensity < intensity[next]) {
+                intensity[next] = maxIntensity;
+                heap.enqueue({ node: next, intensity: maxIntensity });
+            } 
         }
     }
-    return answer;
+    
+    // intensity 최솟값 기준 선정렬, node 기준 후정렬
+    return intensity
+        .filter((v, i) => (summitMap.has(i)))
+        .map((v, i) => [summits[i], v])
+        .sort((a, b) => a[1] - b[1])
+        .filter((v, _, arr) => v[1] === arr[0][1])
+        .sort((a, b) => a[0] - b[0])[0];
 }
