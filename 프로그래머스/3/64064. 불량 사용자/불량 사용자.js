@@ -1,33 +1,50 @@
 function solution(user_id, banned_id) {
-  answer = 0
-
-  dfs(user_id.slice(), banned_id.slice(), []);
-  answer = Array.from(new Set(arr.map(i => i.sort().join()))).length
-  return answer;
-}
-var answer
-var arr = []
-
-function dfs(remain_users, banned_id, ban) {
-  if (banned_id.length == 0) {
-    arr.push(ban)
-    return 1
-  }
-  else {
-    for (var idx = 0; idx < remain_users.length; idx++) {
-      if (match(remain_users[idx], banned_id[0])) {
-        dfs([...remain_users.slice(0, idx), ...remain_users.slice(idx + 1)],
-          banned_id.slice(1),
-          [...ban, remain_users[idx]]
-        )
-      }
+    var answer =  new Set();
+   let visitied = Array.from({length:user_id.length},()=>true);
+  let nowIdx =0;
+  DFS(nowIdx,[]);
+  function DFS(idx,arr){
+       
+    if(idx>=banned_id.length){
+  
+      let endArr = arr.slice(0);
+      endArr.sort();
+      answer.add(JSON.stringify([...endArr]))
+      return;
     }
-    return 0
+    let targetBid = banned_id[idx];
+    for(let i=0; i<user_id.length;i++){
+      let uId = user_id[i];
+      if(uId.length!==targetBid.length || !visitied[i]){
+        continue;
+      }
+      for(let j=0; j<uId.length+1;j++){
+        let uIdLetter = uId[j];
+        let bIdLetter = targetBid[j];
+        if(bIdLetter==='*'){
+          continue;
+        }
+        if(uIdLetter!==bIdLetter){
+          break;
+        }
+        if(j===uId.length){
+        
+          visitied[i] = false;
+          arr.push(uId);
+       
+          DFS(idx+1,arr)
+       
+          arr.pop();
+          visitied[i] = true;
+        }
+      }
+      
+    }
+    
   }
-}
+  
 
-function match(id, pattern) {
-  pattern = pattern.replace(/\*/g, ".");
-  const regex = RegExp("\^(" + pattern + "\)$")
-  return regex.test(id)
+
+  
+    return answer.size;
 }
