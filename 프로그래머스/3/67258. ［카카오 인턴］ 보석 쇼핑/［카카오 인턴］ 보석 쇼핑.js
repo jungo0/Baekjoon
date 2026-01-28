@@ -1,18 +1,14 @@
-function solution (gems) {
-  const list = [];
-  const shoppingBag = new Map();
-  const kinds = new Set(gems).size;
-  
-  for(let i = 0; i < gems.length; i++) {
-    shoppingBag.delete(gems[i]);
-    shoppingBag.set(gems[i], i+1);
-    
-    if(kinds === shoppingBag.size) {
-      list.push([shoppingBag.values().next().value, i+1]);
-    }
-  }
-  
-  list.sort((a, b) => a[1]-a[0] === b[1]-b[0] ? a[0]-b[0] : (a[1]-a[0]) - (b[1]-b[0]));
-  
-  return list[0];
+function solution(gems) {
+    const cnt = new Set(gems).size;
+    const gemMap = new Map();
+    var answer = [1, gems.length];
+    gems.forEach((gem, i) => {
+        gemMap.delete(gem);
+        gemMap.set(gem, i);
+        if (gemMap.size === cnt){
+            const cand = [gemMap.values().next().value + 1, i + 1];
+            answer = answer[1] - answer[0] > cand[1] - cand[0] ? cand : answer;
+        }
+    })
+    return answer;
 }
