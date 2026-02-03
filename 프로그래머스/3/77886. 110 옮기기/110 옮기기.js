@@ -1,48 +1,40 @@
 function solution(s) {
-    const result = []
-    for(const s_el of s) {
-        let count = 0
-        const cur = s_el.split("")
-        const stack = []
-        for(let i = 0 ; i < cur.length ; i ++) {
-            const third = cur[i]
-            if(stack.length > 1) {
-                const second = stack.pop()
-                const first = stack.pop()
-                
-                if(first+second+third === "110") {
-                    count++
-                    continue
-                } else {
-                    stack.push(first, second, third)
-                }
-            } else {
-                stack.push(third)
+    const answers = [];
+
+    for (let str of s) {
+        let stack = [];
+        let count = 0;
+
+        for (let i = 0; i < str.length; i++) {
+            stack.push(str[i]);
+            if (
+                stack.length >= 3 &&
+                stack[stack.length - 3] === '1' &&
+                stack[stack.length - 2] === '1' &&
+                stack[stack.length - 1] === '0'
+            ) {
+                stack.pop();
+                stack.pop();
+                stack.pop();
+                count++;
             }
         }
-        if(!count) {
-            result.push(s_el)
+
+        let idx = stack.lastIndexOf('0');
+        if (idx === -1) {
+            stack = Array(count).fill('110').join('') + stack.join('');
         } else {
-            const list = []
-            const reverse110 = "011"
-            while(stack.length) {
-                const curElement = stack.pop()
-                if(curElement === '0') {
-                    stack.push("0")
-                    break
-                }
-                list.push("1")
-            }
-            while(count) {
-                list.push(...[...reverse110])
-                count--
-            }
-            
-            while(stack.length) {
-                list.push(stack.pop())
-            }
-            result.push(list.reverse().join(""))
+            stack =
+                stack.slice(0, idx + 1).join('') +
+                Array(count).fill('110').join('') +
+                stack.slice(idx + 1).join('');
         }
+
+        answers.push(stack);
     }
-    return result
+
+    return answers;
 }
+
+const a = ['1110', '100111100', '0111111010'];
+console.log(solution(a));
