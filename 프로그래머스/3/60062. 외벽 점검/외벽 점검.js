@@ -1,41 +1,45 @@
-function solution (n, weak, dist) {
-  const len = weak.length;
-  const linear_weak = new Array(len*2 - 1).fill(0);
-  
-  for(let i = 0; i < len*2-1; i++)
-    linear_weak[i] = i < len ? weak[i] : weak[i-len] + n;
-  
-  dist.sort((a, b) => b-a);
-  
-  for(let i = 1; i <= dist.length; i++) {
-    const permutation = getPermutation(dist, i);
-    
-    for(const permu of permutation) {
-      for(let j = 0; j < len; j++) {
-        let line = linear_weak.slice(j, len+j);
-        for(const p of permu) {
-          const coverage = line[0] + p;
-          line = line.filter(e => e > coverage);
-          if(!line.length) return i;
+function solution(n, weak, dist) {
+  const flattenWeak = [...weak, ...weak.map((elem) => elem + n)];
+  const weakLen = weak.length;
+  const distLen = dist.length;
+  const visits = new Array(distLen).fill(0);
+  let answer = distLen + 1;
+
+  if (weakLen === 1) return 1;
+
+  function permutation(L, arr) {
+    if (L === distLen) {
+      for (let i = 0; i < weakLen; i++) {
+        const end = i + weakLen;
+        let left = i;
+        let cnt = 0;
+
+        for (let elem of arr) {
+          if (left >= end) break;
+          cnt += 1;
+          const maxDist = elem + flattenWeak[left];
+
+          while (left < end && maxDist >= flattenWeak[left]) {
+            left++;
+          }
         }
+
+        if (left < end) continue;
+
+        answer = Math.min(answer, cnt);
       }
+      return;
+    }
+
+    for (let i = 0; i < distLen; i++) {
+      if (visits[i]) continue;
+      visits[i] = 1;
+      permutation(L + 1, [...arr, dist[i]]);
+      visits[i] = 0;
     }
   }
-  
-  return -1;
-}
 
-const getPermutation = (arr, n) => {
-  if(n === 1) return arr.map(el => [el]);
-  const result = [];
-  
-  arr.forEach((fixed, idx, origin) => {
-    const rest = [...origin.slice(0, idx), ...origin.slice(idx+1)];
-    const perms = getPermutation(rest, n-1);
-    const attached = perms.map(perm => [fixed, ...perm]);
-    result.push(...attached);
-  });
-  
-  return result;
+  permutation(0, []);
+
+  return answer === distLen + 1 ? -1 : answer;
 }
-              
