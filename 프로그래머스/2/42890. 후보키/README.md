@@ -1,10 +1,10 @@
 # [level 2] 후보키 - 42890 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/42890?language=javascript) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/42890) 
 
 ### 성능 요약
 
-메모리: 34.4 MB, 시간: 1.98 ms
+메모리: 37.6 MB, 시간: 3.65 ms
 
 ### 구분
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2024년 12월 18일 22:38:16
+2026년 02월 24일 20:08:23
 
 ### 문제 설명
 
