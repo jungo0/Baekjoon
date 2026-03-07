@@ -1,20 +1,36 @@
-const gcd = (n1, n2) => {
-  let remainder = n1 % n2;
-  return n2 === 0 ? n1 : gcd(n2, remainder);
+const getDivisors = (number) => {
+  const divisors = [];
+  for (let i = 2; i <= number; i++) {
+    if (number % i === 0) divisors.push(i);
+  }
+  return divisors.reverse();
 };
 
-function solution(arrayA, arrayB) {
-  var answer = 0;
-  let [gcdA, gcdB] = [arrayA[0], arrayB[0]];
-  for (let i = 1; i < arrayA.length; i++) {
-    gcdA = gcd(gcdA, arrayA[i]);
-    gcdB = gcd(gcdB, arrayB[i]);
+const findMaxDivisor = (cardsA, cardsB, divisors) => {
+  const results = [];
+  for (let divisor of divisors) {
+    if (cardsA.every((card) => card % divisor === 0) && 
+        cardsB.every((card) => card % divisor !== 0)
+    ) {
+      results.push(divisor);
+    }
   }
-  if (gcdA === 1) gcdA = 0;
-  if (gcdB === 1) gcdB = 0;
+  return results;
+};
 
-  if (arrayA.every((v) => v % gcdB !== 0)) answer = Math.max(answer, gcdB);
-  if (arrayB.every((v) => v % gcdA !== 0)) answer = Math.max(answer, gcdA);
+const solution = (arrayA, arrayB) => {
+  const sortedA = arrayA.sort((a, b) => a - b);
+  const sortedB = arrayB.sort((a, b) => a - b);
 
-  return answer;
-}
+  const maxADivisors = getDivisors(sortedA[sortedA.length - 1]);
+  const maxBDivisors = getDivisors(sortedB[sortedA.length - 1]);
+
+  const maxADivisor = findMaxDivisor(sortedA, sortedB, maxADivisors);
+  const maxBDivisor = findMaxDivisor(sortedB, sortedA, maxBDivisors);
+
+  const results = maxADivisor.concat(maxBDivisor);
+  const result = results.length ? Math.max(...results) : 0;
+  return result;
+};
+
+solution([2, 2, 2], [3, 3, 3]);
