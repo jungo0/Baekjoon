@@ -1,17 +1,26 @@
-function solution(operations) {
-    const heap = [];
-    const op = operations.map(operation => operation.split(' '));
-    
-    op.forEach(num => {
-        if(num[0] === 'I') {	
-            heap.push(Number(num[1]))
+const solution = (operations) => {
+  let answer = [];
+  for (let i = 0; i < operations.length; i++) {
+    const num = Number(operations[i].substring(2));
+    switch (operations[i].substring(0, 1)) {
+      case "I":
+        answer.push(num);
+        answer.sort((a, b) => {
+          return a - b;
+        });
+        break;
+      case "D":
+        if (num === 1) {
+          answer.pop();
+        } else {
+          answer.shift();
         }
-        else {	
-            const findValue = (num[1] === '1' ? Math.max : Math.min)(...heap);
-            const delIdx = heap.indexOf(findValue);
-            heap.splice(delIdx, 1);
-        }
-    })
-    
-    return heap.length ? [Math.max(...heap), Math.min(...heap)] : [0, 0];
-}
+        break;
+    }
+  }
+  if (answer.length === 0) {
+    return [0, 0];
+  }
+
+  return [answer[answer.length - 1], answer[0]];
+};
