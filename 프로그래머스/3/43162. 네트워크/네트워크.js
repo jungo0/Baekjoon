@@ -1,22 +1,28 @@
 function solution(n, computers) {
-    let answer = 0;
-    const visited = [];
+    let networks = 0;
+
+    let visit = Array(n).fill(false);
     
-    for(let i = 0; i < n; i++) {
-        if(!visited[i]) {
-            dfs(i, visited, computers);	
-            answer++;	
-            	
+    for (let i = 0; i < n; i++) {
+        if (!visit[i]) {
+            networks ++;
+            isVisit(i);
         }
     }
     
-    return answer;
-}
-
-const dfs = (node, visited, computers) => {
-    visited[node] = true;	
-    for(let i = 0; i < computers.length; i++) {
-        if(computers[node][i] === 1 && !visited[i]) 	
-            dfs(i, visited, computers);		
+    function isVisit(index) {
+        visit[index] = true;
+        
+        const computer = computers[index];
+        
+        for (let i = 0; i < computer.length; i++) {
+            const isConnect = computer[i] === 1 ? true : false;
+            
+            if (!visit[i] && isConnect) {
+                isVisit(i);
+            }
+        }        
     }
+    
+    return networks;
 }
