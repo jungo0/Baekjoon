@@ -1,11 +1,4 @@
 function solution(n) {
-    var answer = 0;
-    for(let i =0; i <=n; i++){
-        if(i%2 ===0){
-            answer = answer+ i;
-        }
-    }
-    return answer;
+    var half = Math.floor(n/2);
+    return half*(half+1);
 }
-
-
