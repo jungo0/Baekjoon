@@ -7,6 +7,6 @@ function solution(numbers, k) {
         if(cnt === k){
             return item;
         }
-        cnt+=1;
+        cnt++;
     }
 }
