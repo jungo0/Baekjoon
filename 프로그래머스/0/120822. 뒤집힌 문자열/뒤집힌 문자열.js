@@ -1,4 +1,4 @@
-function solution(my_string,leter) {
+function solution(my_string) {
     var answer = '';
     let cnt = my_string.length -1;
     while(cnt >=0){
