@@ -1,16 +1,15 @@
-
 function solution(n) {
-    let answer = []
+    var answer = [];
 
-    let i = 2;
-    while (i <= n) {
-      if (n % i === 0) {
-        answer.push(i)     
-        n = n / i
-      } else {
-      i++        
-      }
+    for(let i = 2; i <= n; i++) {
+
+        while (n % i === 0) {
+
+            n = n / i;
+            answer.push(i);
+
+        }
     }
 
-    return [...new Set(answer.sort((a, b) => a > b ? 1 : -1))]
+    return [...new Set(answer)];
 }
