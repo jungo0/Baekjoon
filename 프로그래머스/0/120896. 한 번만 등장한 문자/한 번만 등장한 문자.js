@@ -1,17 +1,15 @@
-
 function solution(s) {
-    let lst = s.split('').sort()
-    let answer = []
-    while(lst.length) {
-        let target = lst.shift()
-        if(lst[0] == target) {
-            while(lst[0] == target) {
-                lst.shift();
-            }
-        } else {
-            answer.push(target)
+    let answer = [];
+
+    for (let i = 0; i < s.length; i++) {
+        const char = s[i];
+
+        if (s.indexOf(char) === s.lastIndexOf(char)) {
+            answer.push(char);
         }
     }
-    return answer.join('')
 
+    answer.sort();
+
+    return answer.join('');
 }
