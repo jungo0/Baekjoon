@@ -1,22 +1,15 @@
 function solution(s) {
-    const charCount = {};
+    let answer = [];
 
     for (let i = 0; i < s.length; i++) {
         const char = s[i];
-        if (charCount[char]) {
-            charCount[char] += 1;
-        } else {
-            charCount[char] = 1;
+
+        if (s.indexOf(char) === s.lastIndexOf(char)) {
+            answer.push(char);
         }
     }
 
-    const uniqueChars = [];
-    for (const char in charCount) {
-        if (charCount[char] === 1) {
-            uniqueChars.push(char);
-        }
-    }
+    answer.sort();
 
-    uniqueChars.sort();
-    return uniqueChars.join('');
+    return answer.join('');
 }
