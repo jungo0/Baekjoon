@@ -1,14 +1,17 @@
-select distinct
-    APNT_NO,
-    PT_NAME,
-    p.PT_NO,
-    a.MCDP_CD,
-    DR_NAME,
-    APNT_YMD
-from PATIENT p
-join APPOINTMENT a on p.PT_NO = a.PT_NO
-join DOCTOR d on a.MDDR_ID = d.DR_ID
-where  a.MCDP_CD = 'CS'
-and APNT_CNCL_YN = 'N'
-and date_format(APNT_YMD, '%Y-%m-%d') = '2022-04-13'
-order by APNT_YMD;
+SELECT 
+    A.APNT_NO,
+    P.PT_NAME,
+    P.PT_NO,
+    A.MCDP_CD,
+    D.DR_NAME,
+    A.APNT_YMD
+FROM APPOINTMENT A
+JOIN PATIENT P 
+    ON A.PT_NO = P.PT_NO
+JOIN DOCTOR D 
+    ON A.MDDR_ID = D.DR_ID
+WHERE A.APNT_YMD >= '2022-04-13 00:00:00' 
+  AND A.APNT_YMD < '2022-04-14 00:00:00'
+  AND A.MCDP_CD = 'CS'
+  AND A.APNT_CNCL_YN = 'N'
+ORDER BY A.APNT_YMD ASC;
