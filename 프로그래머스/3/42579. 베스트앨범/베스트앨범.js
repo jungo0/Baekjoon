@@ -1,36 +1,23 @@
 function solution(genres, plays) {
-    const genreTotalMap = {}; // 장르별 총 재생 횟수
-    const genreSongsMap = {}; // 장르별 곡 정보 목록 [{ id, play }, ...]
+    const genrePlayCount = new Map();
+    const genreSongs = new Map();
 
     genres.forEach((genre, id) => {
         const play = plays[id];
+        genrePlayCount.set(genre, (genrePlayCount.get(genre) || 0) + play);
         
-        genreTotalMap[genre] = (genreTotalMap[genre] || 0) + play;
-        
-        if (!genreSongsMap[genre]) {
-            genreSongsMap[genre] = [];
+        if (!genreSongs.has(genre)) {
+            genreSongs.set(genre, []);
         }
-        genreSongsMap[genre].push({ id, play });
+        genreSongs.get(genre).push({ id, play });
     });
 
-    const sortedGenres = Object.keys(genreTotalMap).sort((a, b) => {
-        return genreTotalMap[b] - genreTotalMap[a];
-    });
-
-    const answer = [];
-
-    sortedGenres.forEach(genre => {
-        const songs = genreSongsMap[genre];
-        
-        songs.sort((a, b) => {
-            if (b.play === a.play) {
-                return a.id - b.id;
-            }
-            return b.play - a.play;
+    return [...genrePlayCount.entries()]
+        .sort((a, b) => b[1] - a[1]) // 총 재생수 내림차순 정렬
+        .flatMap(([genre]) => {
+            return genreSongs.get(genre)
+                .sort((a, b) => b.play - a.play || a.id - b.id) // 재생수 내림차순, 같으면 id 오름차순
+                .slice(0, 2)
+                .map(song => song.id);
         });
-
-        songs.slice(0, 2).forEach(song => answer.push(song.id));
-    });
-
-    return answer;
 }
