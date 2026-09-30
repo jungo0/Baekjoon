@@ -1,25 +1,30 @@
 function solution(enroll, referral, seller, amount) {
-  let result = {};
-  let parent = {};
+    const parentMap = new Map();
+    const totalProfitMap = new Map();
 
-  for (let i = 0; i < enroll.length; i++) {
-      parent[enroll[i]] = referral[i];
-  }
+    enroll.forEach((name, i) => {
+        parentMap.set(name, referral[i]);
+        totalProfitMap.set(name, 0);
+    });
 
-  for (let name of enroll) {
-      result[name] = 0;
-  }
+    function distributeProfit(currentName, money) {
+        if (currentName === "-" || money < 1) return;
 
-  for (let j = 0; j < seller.length; j++) {
-      let money = amount[j] * 100;
-      let curName = seller[j];
+        const parent = parentMap.get(currentName);
+        const parentCommission = Math.floor(money * 0.1); // 추천인에게 넘겨줄 10% (원 단위 절사)
+        const myProfit = money - parentCommission;        // 내가 가질 90%
 
-      while(curName !== "-" && money > 0) {
-          result[curName] += money - Math.floor(money / 10);
-          curName = parent[curName];
-          money = Math.floor(money / 10);
-      }
-  }
+        // 내 수익 누적
+        totalProfitMap.set(currentName, totalProfitMap.get(currentName) + myProfit);
 
-  return enroll.map(name => result[name]);
+        // 추천인에게 remaining 금액 전달 (재귀 호출)
+        distributeProfit(parent, parentCommission);
+    }
+
+    seller.forEach((name, i) => {
+        const profit = amount[i] * 100; // 칫솔 1개당 100원
+        distributeProfit(name, profit);
+    });
+
+    return enroll.map(name => totalProfitMap.get(name));
 }
