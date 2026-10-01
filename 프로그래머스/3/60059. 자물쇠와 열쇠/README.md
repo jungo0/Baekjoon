@@ -1,10 +1,10 @@
 # [level 3] 자물쇠와 열쇠 - 60059 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/60059?language=javascript) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/60059) 
 
 ### 성능 요약
 
-메모리: 41.5 MB, 시간: 212.96 ms
+메모리: 51.4 MB, 시간: 17.24 ms
 
 ### 구분
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2025년 03월 26일 22:02:47
+2026년 10월 01일 18:29:46
 
 ### 문제 설명
 
