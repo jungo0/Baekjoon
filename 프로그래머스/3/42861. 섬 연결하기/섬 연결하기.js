@@ -1,66 +1,38 @@
-function union(nodeA, nodeB, list) {
-  const result = [...list]
-
-  const linkA = find(nodeA, list)
-  const linkB = find(nodeB, list)
-
-  linkA <= linkB ? (result[linkB] = linkA) : (result[linkA] = linkB)
-
-  return result
+function find(node, parent) {
+  if (parent[node] === node) return node;
+  return (parent[node] = find(parent[node], parent));
 }
 
-function find(node, list) {
-  if (node === list[node]) {
-    return node
+function union(nodeA, nodeB, parent) {
+  const rootA = find(nodeA, parent);
+  const rootB = find(nodeB, parent);
+
+  if (rootA !== rootB) {
+    if (rootA < rootB) parent[rootB] = rootA;
+    else parent[rootA] = rootB;
+    return true; // 성공적으로 연결됨
   }
-
-  list[node] = find(list[node], list)
-  return list[node]
-}
-
-function isLinked(nodeA, nodeB, list) {
-  return find(nodeA, list) === find(nodeB, list)
-}
-
-function checkAllLink(list) {
-  if (list.length === 1) {
-    return true
-  }
-
-  for (let i = 0; i < list.length - 1; i++) {
-    if (find(i, list) !== find(i + 1, list)) {
-      return false
-    }
-  }
-
-  return true
+  return false; // 이미 연결되어 있음
 }
 
 function solution(n, costs) {
-  const sortedCosts = [...costs]
-  let islandLink = []
-  let result = 0
+  const sortedCosts = [...costs].sort((a, b) => a[2] - b[2]);
 
-  for (let i = 0; i < n; i++) {
-    islandLink[i] = i
-  }
+  const parent = Array.from({ length: n }, (_, i) => i);
 
-  sortedCosts.sort((costA, costB) => {
-    return costA[2] - costB[2]
-  })
+  let totalCost = 0;
+  let bridgeCount = 0;
 
-  for (const [islandA, islandB, cost] of sortedCosts) {
-    if (isLinked(islandA, islandB, islandLink)) {
-      continue
-    }
+  for (const [a, b, cost] of sortedCosts) {
+    // 사이클이 형성되지 않는 경우에만 다리 건설
+    if (union(a, b, parent)) {
+      totalCost += cost;
+      bridgeCount++;
 
-    result += cost
-    islandLink = union(islandA, islandB, islandLink)
-
-    if (checkAllLink(islandLink)) {
-      break
+      // 연결된 다리 수가 n - 1개가 되면 모든 섬이 연결된 것
+      if (bridgeCount === n - 1) break;
     }
   }
 
-  return result
+  return totalCost;
 }
