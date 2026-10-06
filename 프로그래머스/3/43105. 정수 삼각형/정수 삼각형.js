@@ -1,15 +1,9 @@
 function solution(triangle) {
-  return Math.max(
-    ...triangle.reduce((cost, line) => {
-      return line.map((v, index) => {
-        return (
-          v +
-          Math.max(
-            index < cost.length ? cost[index] : 0,
-            index > 0 ? cost[index - 1] : 0
-          )
-        );
-      });
-    }, [])
-  );
+  for (let i = triangle.length - 2; i >= 0; i--) {
+    for (let j = 0; j < triangle[i].length; j++) {
+      triangle[i][j] += Math.max(triangle[i + 1][j], triangle[i + 1][j + 1]);
+    }
+  }
+
+  return triangle[0][0];
 }
