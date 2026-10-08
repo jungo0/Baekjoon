@@ -1,19 +1,20 @@
 function solution(n, times) {
-    const sorted = times.sort((a, b) => a - b);
     let start = 1;
-    let end = sorted[sorted.length - 1] * n;
-    
-    
+    let end = Math.max(...times) * n;
+    let answer = end;
+
     while (start <= end) {
-        const mid = Math.floor((start + end) / 2); 
+        const mid = Math.floor((start + end) / 2);
+        
         const sum = times.reduce((acc, cur) => acc + Math.floor(mid / cur), 0);
 
         if (sum < n) {
-            start = mid + 1
+            start = mid + 1;
         } else {
+            answer = mid; 
             end = mid - 1;
         }
     }
-    
-    return start;
+
+    return answer;
 }
