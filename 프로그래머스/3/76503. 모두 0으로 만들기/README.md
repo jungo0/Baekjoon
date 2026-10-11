@@ -4,7 +4,7 @@
 
 ### 성능 요약
 
-메모리: 235 MB, 시간: 597.43 ms
+메모리: 255 MB, 시간: 239.01 ms
 
 ### 구분
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2025년 05월 14일 19:33:17
+2026년 10월 11일 16:12:21
 
 ### 문제 설명
 
@@ -81,7 +81,7 @@
 <li>다음 그림은 주어진 트리의 모든 정점의 가중치를 0으로 만드는 과정을 나타낸 것입니다.</li>
 </ul>
 
-<p><img src="https://grepp-programmers.s3.ap-northeast-2.amazonaws.com/files/production/b8f5b5ec-3825-4524-a19f-2c082bdba36d/all_zero_example.png" title="" alt="all_zero_example.png"></p>
+<p><img src="https://asset.programmers.co.kr/files/production/b8f5b5ec-3825-4524-a19f-2c082bdba36d/all_zero_example.png" title="" alt="all_zero_example.png"></p>
 
 <ol>
 <li>2번 정점과 3번 정점을 선택하여 2번 정점은 1 감소시키고, 3번 정점은 1 증가시킵니다. (2번 반복)</li>
