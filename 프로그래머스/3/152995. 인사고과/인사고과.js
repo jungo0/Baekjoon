@@ -1,26 +1,34 @@
 function solution(scores) {
-    const wanhoA = scores[0][0];
-    const wanhoB = scores[0][1];
-    const wanhoSum = wanhoA + wanhoB;
+    // 완호의 원래 점수 저장
+    const wanho = scores[0];
+    const wanhoSum = wanho[0] + wanho[1];
 
-    // [a, b, isWanho] 형태로 완호 여부 플래그 포함
-    const mapped = scores.map((s, idx) => [...s, idx === 0]);
+    scores.sort((a, b) => {
+        if (a[0] !== b[0]) {
+            return b[0] - a[0]; // 근무 태도 내림차순
+        }
+        return a[1] - b[1]; // 동료 평가 오름차순
+    });
 
-    mapped.sort((a, b) => a[0] === b[0] ? a[1] - b[1] : b[0] - a[0]);
+    let maxPeerScore = 0;
+    let wanhoRank = 1;
 
-    let answer = 1;
-    let maxScore = 0;
-
-    for (const [a, b, isWanho] of mapped) {
-        if (b < maxScore) {
-            if (isWanho) return -1;
+    for (const score of scores) {
+        if (score[1] < maxPeerScore) {
+            if (score === wanho) {
+                return -1; // 완호가 탈락한 경우
+            }
         } else {
-            maxScore = Math.max(maxScore, b);
-            if (a + b > wanhoSum) {
-                answer++;
+            // 인센티브 대상자 유지
+            maxPeerScore = Math.max(maxPeerScore, score[1]);
+            const currentSum = score[0] + score[1];
+            
+            // 완호보다 점수 합이 큰 사람의 수를 세어 석차 결정
+            if (currentSum > wanhoSum) {
+                wanhoRank++;
             }
         }
     }
 
-    return answer;
+    return wanhoRank;
 }
